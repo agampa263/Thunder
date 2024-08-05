@@ -20,6 +20,7 @@
 #include "Time.h"
 #include "Number.h"
 #include <time.h>
+#include <iostream>
 
 namespace {
     // Start day of NTP time as days past the imaginary date 12/1/1 BC.
@@ -832,6 +833,7 @@ POP_WARNING()
 
     string Time::ToRFC1123(const bool localTime) const
     {
+        std::cout << "akshay Time::ToRFC1123 at line 836" << std::endl;
         // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
         TCHAR buffer[32];
 
@@ -841,23 +843,27 @@ POP_WARNING()
         const TCHAR* zone = (localTime == false ? _T(" GMT") : _T(""));
 
         if (localTime == true) {
+            std::cout << "akshay insde localTime == true" << std::endl;
             SYSTEMTIME convertedTime;
             SystemTimeToTzSpecificLocalTime(nullptr, &_time, &convertedTime);
            Time converted(convertedTime, localTime);
             _stprintf(buffer, _T("%s, %02d %s %04d %02d:%02d:%02d%s"), converted.WeekDayName(),
                 converted.Day(), converted.MonthName(), converted.Year(),
                 converted.Hours(), converted.Minutes(), converted.Seconds(), zone);
+            std::cout << "akshay buffer value at line 853" << buffer << std::endl;
         } else
 PUSH_WARNING(DISABLE_WARNING_DEPRECATED_USE)
             _stprintf(buffer, _T("%s, %02d %s %04d %02d:%02d:%02d%s"), WeekDayName(), Day(), MonthName(), Year(),
                 Hours(), Minutes(), Seconds(), zone);
 POP_WARNING()
+            std::cout << "akshay buffer value at line 859" << buffer << std::endl;
 
         return (string(buffer));
     }
 
     string Time::ToISO8601(const bool localTime) const
     {
+        std::cout << "akshay Time::ToISO8601 in windows" << std::endl;
         TCHAR buffer[32];
 
         if (!IsValid())
@@ -873,6 +879,7 @@ POP_WARNING()
 PUSH_WARNING(DISABLE_WARNING_DEPRECATED_USE)
             _stprintf(buffer, _T("%04d-%02d-%02dT%02d:%02d:%02d%s"), converted.Year(), converted.Month(), converted.Day(), converted.Hours(),
                 converted.Minutes(), converted.Seconds(), zone);
+            
 POP_WARNING()
         } else
 PUSH_WARNING(DISABLE_WARNING_DEPRECATED_USE)
@@ -884,9 +891,11 @@ POP_WARNING()
 
     /* static */ Time Time::Now()
     {
+        std::cout << "akshay time now windows" << std::endl;
         SYSTEMTIME systemTime;
 
         ::GetSystemTime(&systemTime);
+        std::cout <<"akshay systemTime value" << systemTime << std::endl;
 
         return (systemTime);
     }
@@ -1037,6 +1046,7 @@ POP_WARNING()
 
     string Time::ToRFC1123(const bool localTime) const
     {
+        std::cout << "akshay ToRFC1123 at line 1046" << std::endl;
         // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
         TCHAR buffer[32];
         const TCHAR* zone = (localTime == false) ? _T(" GMT") : _T("");
@@ -1045,15 +1055,19 @@ POP_WARNING()
             return string();
 
         if (localTime == true) {
+            std::cout<< "akshay localTime == true at line 1055" << std::endl;
             struct tm localTime{};
             localtime_r(&_time.tv_sec, &localTime);
             _stprintf(buffer, _T("%s, %02d %s %04d %02d:%02d:%02d%s"), WeekDayName(localTime),
                 Day(localTime), MonthName(localTime), Year(localTime),
                 Hours(localTime), Minutes(localTime), Seconds(localTime), zone);
+            std::cout << "akshay buffer value at line 1060" << buffer << std::endl;
+
         } else {
             struct tm utcTime = TMHandle();
             _stprintf(buffer, _T("%s, %02d %s %04d %02d:%02d:%02d%s"), WeekDayName(utcTime), Day(utcTime), MonthName(utcTime), Year(utcTime), Hours(utcTime),
                 Minutes(utcTime), Seconds(utcTime), zone);
+            std::cout << "akshay buffer value at line 1065" << buffer << std::endl;
         }
 
         return (string(buffer));
@@ -1061,6 +1075,7 @@ POP_WARNING()
 
     string Time::ToISO8601(const bool localTime) const
     {
+        std::cout << "akshay Time::ToISO8601" << std::endl;
         TCHAR buffer[32];
         const TCHAR* zone = (localTime == false) ? _T("Z") : _T("");
 
@@ -1072,10 +1087,12 @@ POP_WARNING()
             localtime_r(&_time.tv_sec, &localTime);
             _stprintf(buffer, _T("%04d-%02d-%02dT%02d:%02d:%02d%s"), Year(localTime), Month(localTime), Day(localTime), Hours(localTime),
                 Minutes(localTime), Seconds(localTime), zone);
+            std::cout << "akshay value of buffer in in if case ToISO8601 " << buffer << std::endl;
         } else {
             struct tm utcTime = TMHandle();
             _stprintf(buffer, _T("%04d-%02d-%02dT%02d:%02d:%02d%s"), Year(utcTime), Month(utcTime), Day(utcTime), Hours(utcTime),Minutes(utcTime),
                 Seconds(utcTime), zone);
+            std::cout << "akshay value of buffer in else case ToISO8601 " << buffer << std::endl;
         }
 
         return (string(buffer));
@@ -1118,8 +1135,9 @@ POP_WARNING()
 
     /* static */ Time Time::Now()
     {
+        std::cout << "akshay Time::Now() called" << std::endl;
         struct timespec currentTime{};
-        clock_gettime(CLOCK_REALTIME, &currentTime);
+        clock_gettime(CLOCK_MONOTONIC, &currentTime);
 
         return (Time(currentTime));
     }
